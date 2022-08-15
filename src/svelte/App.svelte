@@ -9,6 +9,7 @@
   import TopBarMoreMenu from './TopBarMoreMenu.svelte';
   import {
     datasource,
+    datasourceLoader,
     profile,
     AppLayout,
     ExportDialog,
@@ -21,12 +22,12 @@
   } from '@modheader/core';
 
   const { selectedProfile } = profile;
-  const { isPaused, init } = datasource;
+  const { isPaused } = datasource;
 
   export let isFullscreen;
 </script>
 
-{#await init() then initResult}
+{#await datasourceLoader.init() then initResult}
   <AppLayout {isFullscreen}>
     <div class:disabled={$isPaused} class="main-content">
       <LiveProfileUrl profile={$selectedProfile} />

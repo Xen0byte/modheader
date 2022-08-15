@@ -2,7 +2,7 @@ import lodashCloneDeep from 'lodash/cloneDeep.js';
 import lodashIsUndefined from 'lodash/isUndefined.js';
 import lodashIsEqual from 'lodash/isEqual.js';
 import { profile, storage, storageLoader, storageWriter, utils } from '@modheader/core';
-import { optimizeResourceFilters, optimizeFilters, optimizeUrlFilters} from './filter.js';
+import { optimizeResourceFilters, optimizeFilters, optimizeUrlFilters } from './filter.js';
 import { optimizeUrlRedirects } from './url-redirect.js';
 
 const MAX_PROFILES_IN_CLOUD = 20;
@@ -39,28 +39,39 @@ export async function loadProfilesFromStorage(dataChangeCallback) {
   });
 }
 
+function optimizeProfile(value) {
+  const profile = lodashCloneDeep(value);
+  profile.headers = utils.filterEnabled(profile.headers);
+  profile.respHeaders = utils.filterEnabled(profile.respHeaders);
+  profile.cookieHeaders = utils.filterEnabled(profile.cookieHeaders);
+  profile.setCookieHeaders = utils.filterEnabled(profile.setCookieHeaders);
+  profile.urlReplacements = optimizeUrlRedirects(profile.urlReplacements);
+  profile.urlFilters = optimizeUrlFilters(profile.urlFilters);
+  profile.excludeUrlFilters = optimizeUrlFilters(profile.excludeUrlFilters);
+  profile.resourceFilters = optimizeResourceFilters(profile.resourceFilters);
+  profile.tabFilters = optimizeFilters(profile.tabFilters);
+  profile.tabGroupFilters = optimizeFilters(profile.tabGroupFilters);
+  profile.windowFilters = optimizeFilters(profile.windowFilters);
+  profile.timeFilters = optimizeFilters(profile.timeFilters);
+  return profile;
+}
+
 function reloadActiveProfiles(chromeLocal) {
   const activeProfiles = [];
   let selectedActiveProfile = undefined;
+  if (chromeLocal.managedProfiles.length > 0) {
+    for (const value of chromeLocal.managedProfiles) {
+      const profile = optimizeProfile(value);
+      activeProfiles.push(profile);
+    }
+  }
   if (chromeLocal.profiles) {
     const profiles = chromeLocal.profiles;
     for (const [i, value] of profiles.entries()) {
       if (i !== chromeLocal.selectedProfile && !value.alwaysOn) {
         continue;
       }
-      const profile = lodashCloneDeep(value);
-      profile.headers = utils.filterEnabled(profile.headers);
-      profile.respHeaders = utils.filterEnabled(profile.respHeaders);
-      profile.cookieHeaders = utils.filterEnabled(profile.cookieHeaders);
-      profile.setCookieHeaders = utils.filterEnabled(profile.setCookieHeaders);
-      profile.urlReplacements = optimizeUrlRedirects(profile.urlReplacements);
-      profile.urlFilters = optimizeUrlFilters(profile.urlFilters);
-      profile.excludeUrlFilters = optimizeUrlFilters(profile.excludeUrlFilters);
-      profile.resourceFilters = optimizeResourceFilters(profile.resourceFilters);
-      profile.tabFilters = optimizeFilters(profile.tabFilters);
-      profile.tabGroupFilters = optimizeFilters(profile.tabGroupFilters);
-      profile.windowFilters = optimizeFilters(profile.windowFilters);
-      profile.timeFilters = optimizeFilters(profile.timeFilters);
+      const profile = optimizeProfile(value);
       if (i === chromeLocal.selectedProfile) {
         selectedActiveProfile = profile;
       }

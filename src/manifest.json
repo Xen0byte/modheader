@@ -29,6 +29,9 @@
   "externally_connectable": {
     "matches": ["*://modheader.com/*"]
   },
+  "storage": {
+    "managed_schema": "schema.json"
+  },
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {

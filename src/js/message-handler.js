@@ -43,7 +43,8 @@ export async function onMessageReceived({ chromeLocal, request }) {
       return {
         success: true,
         profiles: chromeLocal.profiles,
-        selectedProfileIndex: chromeLocal.selectedProfile
+        selectedProfileIndex: chromeLocal.selectedProfile,
+        managedProfiles: chromeLocal.managedProfiles
       };
     default:
       return undefined;

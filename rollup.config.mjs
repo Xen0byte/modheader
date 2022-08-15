@@ -32,7 +32,8 @@ export default {
     copy({
       targets: [
         { src: 'src/images/icon_bw.png', dest: 'dist/images' },
-        { src: 'src/images/modresponse.png', dest: 'dist/images' }
+        { src: 'src/images/modresponse.png', dest: 'dist/images' },
+        { src: 'src/schema.json', dest: 'dist' }
       ],
       hook: 'writeBundle'
     }),
