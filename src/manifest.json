@@ -1,6 +1,6 @@
 {
   "name": "ModHeader",
-  "version": "4.0.16",
+  "version": "4.0.17",
   "manifest_version": 2,
   "homepage_url": "https://modheader.com/",
   "description": "Modify HTTP request and response headers",
