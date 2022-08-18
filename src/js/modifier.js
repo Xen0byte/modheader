@@ -4,6 +4,7 @@ import cookie from 'cookie';
 import { parse as parseSetCookie } from 'set-cookie-parser';
 import { passFilters } from './filter.js';
 import { redirectUrl } from './url-redirect.js';
+import { evaluateValue } from './utils.js';
 import { AppendMode } from './append-mode.js';
 
 function isEnabled(chromeLocal) {
@@ -76,7 +77,11 @@ function modifyHeader(url, currentProfile, source, dest) {
         continue;
       }
     }
-    const headerValue = header.value;
+    const headerValue = evaluateValue({
+      value: header.value,
+      url,
+      oldValue: index !== undefined ? dest[index].value : undefined
+    });
     if (index !== undefined) {
       dest[index].value = handleAppendMode({
         appendMode: header.appendMode,
