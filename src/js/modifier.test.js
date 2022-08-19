@@ -7,6 +7,9 @@ const mockTabs = {
 jest.doMock('@modheader/core', () => ({
   tabs: mockTabs
 }));
+jest.doMock('uuid', () => ({
+  v4: jest.fn(() => 'test-uuid')
+}));
 
 const { FilterType } = require('./filter.js');
 const { modifyRequestUrls, modifyRequestHeaders, modifyResponseHeaders } = require('./modifier.js');
@@ -59,6 +62,27 @@ describe('modifier', () => {
       const actual = modifyRequestUrls({ chromeLocal, activeProfiles, details });
 
       expect(actual).toEqual({ redirectUrl: 'https://modheader.com/' });
+    });
+
+    test('Redirect to new url - dynamic value', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          urlReplacements: [
+            {
+              name: new RegExp('.*'),
+              value: 'https://modheader.com{{url_path}}'
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://bewisse.com/test'
+      };
+      const actual = modifyRequestUrls({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({ redirectUrl: 'https://modheader.com/test' });
     });
 
     test('Paused profile', () => {
@@ -175,6 +199,40 @@ describe('modifier', () => {
           {
             name: 'Foo',
             value: 'Test bar'
+          }
+        ]
+      });
+    });
+
+    test('Modify header - dynamic value', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          headers: [
+            {
+              name: 'foo',
+              value: 'foo-{{uuid}}'
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'Foo',
+            value: 'Bar'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'Foo',
+            value: 'foo-test-uuid'
           }
         ]
       });
@@ -884,6 +942,44 @@ describe('modifier', () => {
       });
     });
 
+    test('Modify cookie header - dynamic value', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'foo',
+              value: 'bar-{{uuid}}'
+            },
+            {
+              name: 'foo2',
+              value: 'Test2'
+            },
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=bar-test-uuid; foo2=Test2'
+          }
+        ]
+      });
+    });
+
     test('Modify cookie header - regex enabled - multiple cookies', () => {
       const chromeLocal = {};
       const activeProfiles = [
@@ -904,7 +1000,7 @@ describe('modifier', () => {
           {
             name: 'cookie',
             value: 'foo=Original; foo2=Original2; foo3=Original3'
-          },
+          }
         ]
       };
       const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
@@ -914,6 +1010,42 @@ describe('modifier', () => {
           {
             name: 'cookie',
             value: 'foo=Test; foo2=Test; foo3=Test'
+          }
+        ]
+      });
+    });
+
+
+    test('Modify cookie header - regex enabled - dynamic value', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          cookieHeaders: [
+            {
+              name: 'fo.*',
+              value: 'bar-{{uuid}}',
+              regexEnabled: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=Original; foo2=Original2; foo3=Original3'
+          }
+        ]
+      };
+      const actual = modifyRequestHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        requestHeaders: [
+          {
+            name: 'cookie',
+            value: 'foo=bar-test-uuid; foo2=bar-test-uuid; foo3=bar-test-uuid'
           }
         ]
       });
@@ -1161,6 +1293,43 @@ describe('modifier', () => {
       });
     });
 
+    test('Modify set cookie header - dynamic value', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'foo',
+              value: 'bar-{{uuid}}',
+              path: '/_/test',
+              httpOnly: true,
+              attributeOverride: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; Path=/; Secure'
+          }
+        ]
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=bar-test-uuid; Path=/_/test; HttpOnly'
+          }
+        ]
+      });
+    });
+
     test('Modify set cookie header - regex enabled - Override value and attribute', () => {
       const chromeLocal = {};
       const activeProfiles = [
@@ -1199,6 +1368,44 @@ describe('modifier', () => {
       });
     });
 
+    test('Modify set cookie header - regex enabled - dynamic value', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'fo.*',
+              value: 'bar-{{uuid}}',
+              path: '/_/test',
+              regexEnabled: true,
+              httpOnly: true,
+              attributeOverride: true
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=Original; Path=/; Secure'
+          }
+        ]
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=bar-test-uuid; Path=/_/test; HttpOnly'
+          }
+        ]
+      });
+    });
+
     test('Modify set-cookie header - Add new header', () => {
       const chromeLocal = {};
       const activeProfiles = [
@@ -1223,6 +1430,35 @@ describe('modifier', () => {
           {
             name: 'set-cookie',
             value: 'foo=Test'
+          }
+        ]
+      });
+    });
+
+    test('Modify set-cookie header - Add new header - dynamic value', () => {
+      const chromeLocal = {};
+      const activeProfiles = [
+        {
+          ...EMPTY_PROFILE,
+          setCookieHeaders: [
+            {
+              name: 'foo',
+              value: 'bar-{{uuid}}'
+            }
+          ]
+        }
+      ];
+      const details = {
+        url: 'https://modheader.com/',
+        responseHeaders: []
+      };
+      const actual = modifyResponseHeaders({ chromeLocal, activeProfiles, details });
+
+      expect(actual).toEqual({
+        responseHeaders: [
+          {
+            name: 'set-cookie',
+            value: 'foo=bar-test-uuid'
           }
         ]
       });

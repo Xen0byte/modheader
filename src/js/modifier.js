@@ -104,7 +104,11 @@ function modifyCookie(url, currentProfile, source, dest) {
   for (const cookieHeader of source) {
     const matchedKeys = findAllMatchingKeys(cookieHeader, parsedCookie);
     if (matchedKeys.length === 0 && !cookieHeader.regexEnabled) {
-      parsedCookie[cookieHeader.name] = cookieHeader.value;
+      parsedCookie[cookieHeader.name] = evaluateValue({
+        value: cookieHeader.value,
+        oldValue: '',
+        url
+      });
     }
     for (const key of matchedKeys) {
       if (!cookieHeader.value) {
@@ -113,7 +117,11 @@ function modifyCookie(url, currentProfile, source, dest) {
           continue;
         }
       }
-      parsedCookie[key] = cookieHeader.value;
+      parsedCookie[key] = evaluateValue({
+        value: cookieHeader.value,
+        oldValue: parsedCookie[key],
+        url
+      });
     }
   }
   const finalCookieHeader = Object.entries(parsedCookie)
@@ -159,7 +167,11 @@ function modifySetCookie(url, currentProfile, source, dest) {
           if (cookie.retainExistingCookie) {
             cookieMap[key] = {
               ...cookie,
-              value: cookieMap[key].value
+              value: evaluateValue({
+                value: cookieMap[key].value,
+                oldValue: cookieMap[key].value,
+                url
+              })
             };
           } else {
             cookieMap[key].value = '';
@@ -169,13 +181,28 @@ function modifySetCookie(url, currentProfile, source, dest) {
     } else {
       const matchedKeys = findAllMatchingKeys(cookie, cookieMap);
       if (matchedKeys.length === 0 && !cookie.regexEnabled) {
-        cookieMap[cookie.name] = cookie;
+        cookieMap[cookie.name] = {
+          ...cookie,
+          value: evaluateValue({
+            value: cookie.value,
+            oldValue: '',
+            url
+          })
+        };
       } else {
         for (const key of matchedKeys) {
+          const cookieValue = evaluateValue({
+            value: cookie.value,
+            oldValue: cookieMap[key].value,
+            url
+          });
           if (cookie.attributeOverride) {
-            cookieMap[key] = cookie;
+            cookieMap[key] = {
+              ...cookie,
+              value: cookieValue
+            };
           } else {
-            cookieMap[key].value = cookie.value;
+            cookieMap[key].value = cookieValue;
           }
         }
       }

@@ -55,7 +55,8 @@ describe('worker-data-manager', () => {
 
   test('Load empty profiles from storage', async () => {
     mockStorageLoader.initStorage.mockResolvedValue({
-      profiles: []
+      profiles: [],
+      managedProfiles: [],
     });
     const callback = jest.fn();
     await loadProfilesFromStorage(callback);
@@ -63,7 +64,8 @@ describe('worker-data-manager', () => {
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback).toHaveBeenCalledWith({
       chromeLocal: {
-        profiles: []
+        profiles: [],
+        managedProfiles: [],
       },
       activeProfiles: []
     });
@@ -82,6 +84,7 @@ describe('worker-data-manager', () => {
           ]
         }
       ],
+      managedProfiles: [],
       selectedProfile: 0
     });
     const callback = jest.fn();
@@ -101,6 +104,7 @@ describe('worker-data-manager', () => {
             ]
           }
         ],
+        managedProfiles: [],
         selectedProfile: 0
       },
       activeProfiles: [
@@ -147,6 +151,7 @@ describe('worker-data-manager', () => {
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1, profile2, profile3],
+      managedProfiles: [],
       selectedProfile: 1
     });
     const callback = jest.fn();
@@ -156,6 +161,7 @@ describe('worker-data-manager', () => {
     expect(callback).toHaveBeenCalledWith({
       chromeLocal: {
         profiles: [profile1, profile2, profile3],
+        managedProfiles: [],
         selectedProfile: 1
       },
       activeProfiles: [profile2, profile3],
@@ -174,13 +180,14 @@ describe('worker-data-manager', () => {
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1],
+      managedProfiles: [],
       selectedProfile: 0
     });
     mockStorage.addStorageChangeListener.mockImplementation((fn) => {
       fn({
         profiles: {
           newValue: [profile2]
-        }
+        },
       });
     });
     const callback = jest.fn();
@@ -217,13 +224,14 @@ describe('worker-data-manager', () => {
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1],
+      managedProfiles: [],
       selectedProfile: 0
     });
     mockStorage.addStorageChangeListener.mockImplementation((fn) => {
       fn({
         profiles: {
           newValue: [profile2]
-        }
+        },
       });
     });
     const callback = jest.fn();
@@ -260,6 +268,7 @@ describe('worker-data-manager', () => {
     };
     mockStorageLoader.initStorage.mockResolvedValue({
       profiles: [profile1, profile2],
+      managedProfiles: [],
       selectedProfile: 0
     });
     mockStorage.addStorageChangeListener.mockImplementation((fn) => {

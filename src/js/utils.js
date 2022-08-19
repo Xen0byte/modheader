@@ -13,7 +13,7 @@ function getDynamicValue({ command, url, oldValue }) {
     case 'url_path':
       return new URL(url).pathname;
     case 'existing_value':
-      return oldValue;
+      return oldValue || '';
     case 'timestamp':
       return Date.now();
     default:
