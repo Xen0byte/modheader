@@ -143,7 +143,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 });
 
 chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install') {
+  if (details.reason === 'install' && !process.env.WEB_DRIVER) {
     setTimeout(() => {
       if (!chromeLocal.managedProfiles || chromeLocal.managedProfiles.length === 0) {
         tabs.openUrl({ path: '/modheader/welcome' });
