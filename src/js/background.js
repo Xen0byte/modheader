@@ -96,9 +96,9 @@ async function initialize() {
   });
   if (process.env.WEB_DRIVER) {
     chrome.webRequest.onBeforeRequest.addListener(
-        webdriverOnBeforeRequestHandler_,
-        { urls: ['<all_urls>'] },
-        ['blocking']
+      webdriverOnBeforeRequestHandler_,
+      { urls: ['<all_urls>'] },
+      ['blocking']
     );
   }
   chrome.alarms.create(CHECK_LIVE_PROFILE_ALARM, {
@@ -139,6 +139,16 @@ chrome.commands.onCommand.addListener(async (command) => {
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === CHECK_LIVE_PROFILE_ALARM && !chromeLocal.isPaused && chromeLocal.profiles) {
     await profileSync.reloadAllLiveProfile(chromeLocal.profiles);
+  }
+});
+
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === 'install') {
+    setTimeout(() => {
+      if (!chromeLocal.managedProfiles || chromeLocal.managedProfiles.length === 0) {
+        tabs.openUrl({ path: '/modheader/welcome' });
+      }
+    }, 1000);
   }
 });
 
