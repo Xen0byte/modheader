@@ -17,6 +17,7 @@
     "build-all": "node build-all.js",
     "build-webdriver-chrome": "cross-env NODE_ENV=production WEB_DRIVER=true BROWSER=chrome rollup -c",
     "build-webdriver-firefox": "cross-env NODE_ENV=production WEB_DRIVER=true BROWSER=firefox rollup -c",
+    "build-webdriver-chrome-dev": "cross-env NODE_ENV=development WEB_DRIVER=true BROWSER=chrome rollup -c",
     "start-webdriver": "cross-env NODE_ENV=development WEB_DRIVER=true BROWSER=chrome rollup -c",
     "start": "cross-env NODE_ENV=development BROWSER=chrome rollup -c -w",
     "start-firefox": "cross-env NODE_ENV=development BROWSER=firefox rollup -c -w"

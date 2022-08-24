@@ -9,7 +9,7 @@ import copy from 'rollup-plugin-copy';
 import { chromeExtension, simpleReloader } from 'rollup-plugin-chrome-extension';
 import { emptyDir } from 'rollup-plugin-empty-dir';
 
-const production = !process.env.ROLLUP_WATCH;
+const production = process.env.NODE_ENV === 'production';
 const URL_BASE = production
   ? 'https://modheader.com'
   : process.env.URL_BASE || 'https://modheader.com';
