@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import lodashRandom from 'lodash/random';
 
 function getDynamicValue({ command, url, oldValue }) {
   switch (command) {
@@ -16,6 +17,8 @@ function getDynamicValue({ command, url, oldValue }) {
       return oldValue || '';
     case 'timestamp':
       return Date.now();
+    case 'ip_v4':
+      return `${lodashRandom(256)}.${lodashRandom(256)}.${lodashRandom(256)}.${lodashRandom(256)}`;
     default:
       return '';
   }

@@ -142,18 +142,18 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   }
 });
 
-chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install' && !process.env.WEB_DRIVER) {
-    setTimeout(() => {
-      if (!chromeLocal.managedProfiles || chromeLocal.managedProfiles.length === 0) {
-        tabs.openUrl({ path: '/modheader/welcome' });
-      }
-    }, 1000);
-  }
-});
-
 window.saveToStorage = function (items) {
   return storage.setLocal(items);
 };
 
 initialize();
+
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === 'install' && !process.env.WEB_DRIVER) {
+    setTimeout(() => {
+      if (!chromeLocal.managedProfiles || chromeLocal.managedProfiles.length === 0) {
+        tabs.openUrl({ path: '/modheader/welcome', autoClose: false });
+      }
+    }, 1000);
+  }
+});
