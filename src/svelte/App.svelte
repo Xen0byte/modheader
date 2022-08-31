@@ -7,6 +7,7 @@
   import { ModifierType } from '../js/modifier-type.js';
   import TopBarAddMenu from './TopBarAddMenu.svelte';
   import TopBarMoreMenu from './TopBarMoreMenu.svelte';
+  import AdvancedCsp from './AdvancedCsp.svelte';
   import {
     datasource,
     datasourceLoader,
@@ -54,6 +55,14 @@
           modifierType={ModifierType.SET_COOKIE_MODIFIER}
           modifiers={lodashCloneDeep($selectedProfile.setCookieHeaders)}
         />
+      {/if}
+      {#if $selectedProfile.cspHeaders.length > 0}
+        <Modifiers
+          modifierType={ModifierType.CSP_MODIFIER}
+          modifiers={lodashCloneDeep($selectedProfile.cspHeaders)}
+        >
+          <AdvancedCsp slot="bottom-slot" />
+        </Modifiers>
       {/if}
       {#if $selectedProfile.urlReplacements.length > 0}
         <Modifiers

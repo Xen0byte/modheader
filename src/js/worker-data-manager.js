@@ -45,6 +45,7 @@ function optimizeProfile(value) {
   profile.respHeaders = utils.filterEnabled(profile.respHeaders);
   profile.cookieHeaders = utils.filterEnabled(profile.cookieHeaders);
   profile.setCookieHeaders = utils.filterEnabled(profile.setCookieHeaders);
+  profile.cspHeaders = utils.filterEnabled(profile.cspHeaders);
   profile.urlReplacements = optimizeUrlRedirects(profile.urlReplacements);
   profile.urlFilters = optimizeUrlFilters(profile.urlFilters);
   profile.excludeUrlFilters = optimizeUrlFilters(profile.excludeUrlFilters);

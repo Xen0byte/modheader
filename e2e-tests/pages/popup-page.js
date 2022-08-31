@@ -16,6 +16,9 @@ export const ModifierType = {
   SET_COOKIE_MODIFIER: {
     id: 'set-cookie-modifier'
   },
+  CSP_MODIFIER: {
+    id: 'csp-modifier'
+  },
   URL_REPLACEMENT: {
     id: 'url-replacement'
   }

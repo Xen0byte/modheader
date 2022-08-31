@@ -12,6 +12,7 @@ const ARRAY_FIELDS = [
   'urlReplacements',
   'cookieHeaders',
   'setCookieHeaders',
+  'cspHeaders',
   'urlFilters',
   'excludeUrlFilters',
   'resourceFilters',
@@ -82,6 +83,9 @@ function upgradeFromProfileVersion1({ profile, index }) {
   }
   if (!profile.setCookieHeaders || !lodashIsArray(profile.setCookieHeaders)) {
     profile.setCookieHeaders = [];
+  }
+  if (!profile.cspHeaders || !lodashIsArray(profile.cspHeaders)) {
+    profile.cspHeaders = [];
   }
   if (!profile.urlReplacements || !lodashIsArray(profile.urlReplacements)) {
     profile.urlReplacements = [];
@@ -154,6 +158,7 @@ function createProfileHook({ profileNum }) {
     urlReplacements: [],
     cookieHeaders: [],
     setCookieHeaders: [],
+    cspHeaders: [],
     urlFilters: [],
     excludeUrlFilters: [],
     resourceFilters: [],

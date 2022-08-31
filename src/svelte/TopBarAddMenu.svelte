@@ -94,6 +94,21 @@
           <LockIcon />
         </Item>
         <Item
+          id="add-csp-modifier"
+          on:SMUI:action={() => {
+            if ($isProUser) {
+              updateProfileAndClose({
+                cspHeaders: addHeader($selectedProfile.cspHeaders)
+              });
+            } else {
+              showUpgradeRequired('Upgrade to Pro to modify content security policy header');
+            }
+          }}
+        >
+          Content security policy
+          <LockIcon />
+        </Item>
+        <Item
           id="add-url-replacement"
           on:SMUI:action={async () =>
             updateProfileAndClose({

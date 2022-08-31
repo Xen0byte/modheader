@@ -36,6 +36,7 @@ export async function resetBrowserActions({ chromeLocal, activeProfiles, selecte
         currentProfile.respHeaders.length +
         currentProfile.cookieHeaders.length +
         currentProfile.setCookieHeaders.length +
+        currentProfile.cspHeaders.length +
         currentProfile.urlReplacements.length;
     }
     if (numHeaders === 0) {

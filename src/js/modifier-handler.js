@@ -6,7 +6,7 @@ import AdvancedCookie from '../svelte/AdvancedCookie.svelte';
 import AdvancedHeader from '../svelte/AdvancedHeader.svelte';
 import { addUrlRedirect, removeUrlRedirect } from './url-redirect.js';
 
-const { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS } = knownHeaders;
+const { KNOWN_REQUEST_HEADERS, KNOWN_RESPONSE_HEADERS, KNOWN_CSP_POLICIES } = knownHeaders;
 const { selectedProfile, updateProfile } = profile;
 
 function getSelectedProfile() {
@@ -86,6 +86,24 @@ export const MODIFIER_TYPES = {
         setCookieHeaders: removeHeader(getSelectedProfile().setCookieHeaders, headerIndex)
       }),
     refreshHandler: (data) => updateProfile({ setCookieHeaders: data })
+  },
+  [ModifierType.CSP_MODIFIER]: {
+    title: 'CSP response modifiers',
+    nameLabel: 'Name',
+    valueLabel: 'Value',
+    fieldName: 'cspHeaders',
+    customAutocompleteFieldName: 'cspHeadersAutocomplete',
+    autocompleteNames: KNOWN_CSP_POLICIES,
+    autocompleteListId: 'csp-autocomplete',
+    addHandler: () =>
+      updateProfile({
+        cspHeaders: addSetCookieHeader(getSelectedProfile().cspHeaders)
+      }),
+    removeHandler: (headerIndex) =>
+      updateProfile({
+        cspHeaders: removeHeader(getSelectedProfile().cspHeaders, headerIndex)
+      }),
+    refreshHandler: (data) => updateProfile({ cspHeaders: data })
   },
   [ModifierType.URL_REPLACEMENT]: {
     title: 'Redirect URLs',

@@ -5,6 +5,7 @@ import { parse as parseSetCookie } from 'set-cookie-parser';
 import { passFilters } from './filter.js';
 import { redirectUrl } from './url-redirect.js';
 import { evaluateValue } from './utils.js';
+import { toCspString } from './csp.js';
 import { AppendMode } from './append-mode.js';
 
 function isEnabled(chromeLocal) {
@@ -220,6 +221,32 @@ function modifySetCookie(url, currentProfile, source, dest) {
   }
 }
 
+function modifyCsp(url, currentProfile, source, dest) {
+  if (!source || !source.length) {
+    return;
+  }
+  let cspIndex = -1;
+  let cspMap = {};
+  for (let index = 0; index < dest.length; index++) {
+    const header = dest[index];
+    if (header.name.toLowerCase() === 'content-security-policy') {
+      cspIndex = index;
+      break;
+    }
+  }
+  for (const policy of source) {
+    if (policy.value) {
+      cspMap[policy.name] = policy.value;
+    }
+  }
+  const csp = toCspString(cspMap);
+  if (cspIndex >= 0) {
+    dest[cspIndex].value = csp;
+  } else {
+    dest.push({ name: 'content-security-policy', value: csp });
+  }
+}
+
 export function modifyRequestHeaders({ chromeLocal, activeProfiles, details }) {
   if (isEnabled(chromeLocal) && activeProfiles.length > 0) {
     for (const currentProfile of activeProfiles) {
@@ -270,6 +297,7 @@ export function modifyResponseHeaders({ chromeLocal, activeProfiles, details }) 
           currentProfile.setCookieHeaders,
           responseHeaders
         );
+        modifyCsp(details.url, currentProfile, currentProfile.cspHeaders, responseHeaders);
         responseHeaders = responseHeaders.filter((entry) => !entry.needRemoval);
       }
     }

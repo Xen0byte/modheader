@@ -197,4 +197,5 @@
       </div>
     {/if}
   {/each}
+  <slot name="bottom-slot" />
 </div>
