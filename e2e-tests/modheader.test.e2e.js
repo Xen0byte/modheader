@@ -39,6 +39,7 @@ describe('e2e test', () => {
     const extensionPath = await packageExtension();
     const options = new chrome.Options()
       .addArguments('--window-size=800,600')
+        .addArguments('--headless=chrome')
       .addExtensions(extensionPath);
     driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
     popupUrl = `${baseUrl}/app.html`;
