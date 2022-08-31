@@ -11,7 +11,7 @@
   function convertToCspString(cspHeaders) {
     const cspMap = {};
     for (const policy of cspHeaders) {
-      if (policy.enabled) {
+      if (policy.enabled && policy.name) {
         cspMap[policy.name] = policy.value;
       }
     }
