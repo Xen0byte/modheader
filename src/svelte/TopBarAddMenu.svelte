@@ -2,7 +2,6 @@
   import MenuSurface from '@smui/menu-surface';
   import List, { Item, Separator } from '@smui/list';
   import IconButton from '@smui/icon-button';
-  import Button from '@smui/button';
   import { mdiPlus } from '@mdi/js';
   import { dialog, identity, profile, tabs, LockIcon, MdiIcon } from '@modheader/core';
   import { addHeader } from '../js/header.js';
@@ -17,7 +16,7 @@
   } from '../js/filter.js';
 
   const { selectedProfile, updateProfile, buttonColor } = profile;
-  const { isProUser } = identity;
+  const { isProUser, signedInUser } = identity;
   const { showUpgradeRequired } = dialog;
 
   async function updateProfileAndClose(profile) {
@@ -37,7 +36,7 @@
     class="add-menu"
     quickOpen={true}
     anchor={true}
-    anchorMargin={{ top: 48, right: 0, bottom: 0, left: -223 }}
+    anchorMargin={{ top: 48, right: 0, bottom: 0, left: $signedInUser ? -223 : -233 }}
   >
     <div class="add-menu-container">
       <List>
@@ -217,7 +216,7 @@
 
 <style module>
   .add-menu {
-    width: 450px;
+    width: 460px;
   }
 
   .add-menu-container {
@@ -226,6 +225,7 @@
   }
 
   .grid-border {
-    border-left: 1px solid #888;
+    border-left: 1px solid var(--grid-separator-color);
+    margin: 8px 0;
   }
 </style>
