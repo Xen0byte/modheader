@@ -226,7 +226,6 @@ function modifyCsp(url, currentProfile, source, dest) {
     return;
   }
   let cspIndex = -1;
-  let cspMap = {};
   for (let index = 0; index < dest.length; index++) {
     const header = dest[index];
     if (header.name.toLowerCase() === 'content-security-policy') {
@@ -234,10 +233,9 @@ function modifyCsp(url, currentProfile, source, dest) {
       break;
     }
   }
+  let cspMap = {};
   for (const policy of source) {
-    if (policy.value) {
-      cspMap[policy.name] = policy.value;
-    }
+    cspMap[policy.name] = policy.value;
   }
   const csp = toCspString(cspMap);
   if (cspIndex >= 0) {

@@ -89,7 +89,7 @@ export const MODIFIER_TYPES = {
   },
   [ModifierType.CSP_MODIFIER]: {
     title: 'CSP response modifiers',
-    nameLabel: 'Name',
+    nameLabel: 'Directive',
     valueLabel: 'Value',
     fieldName: 'cspHeaders',
     customAutocompleteFieldName: 'cspHeadersAutocomplete',

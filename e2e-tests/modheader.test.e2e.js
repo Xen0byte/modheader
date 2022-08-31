@@ -39,7 +39,7 @@ describe('e2e test', () => {
     const extensionPath = await packageExtension();
     const options = new chrome.Options()
       .addArguments('--window-size=800,600')
-        .addArguments('--headless=chrome')
+      .addArguments('--headless=chrome')
       .addExtensions(extensionPath);
     driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
     popupUrl = `${baseUrl}/app.html`;
@@ -240,6 +240,32 @@ describe('e2e test', () => {
 
       await driver.get('https://bewisse.com/test');
       expect(await driver.getCurrentUrl()).toEqual('https://modheader.com/test');
+    });
+
+    test('Add csp modifier', async () => {
+      await driver.get(popupUrl);
+
+      const popupPage = new PopupPage(driver);
+      await popupPage.addModifier(ModifierType.CSP_MODIFIER);
+      await popupPage.setModifier({
+        modifierType: ModifierType.CSP_MODIFIER,
+        name: 'default-src',
+        value: "'self' * 'unsafe-inline'"
+      });
+      await popupPage.addModifier(ModifierType.CSP_MODIFIER);
+      await popupPage.setModifier({
+        modifierType: ModifierType.CSP_MODIFIER,
+        index: 1,
+        name: 'img-src',
+        value: "'self' https: data:"
+      });
+
+      await compareScreenshot('csp');
+
+      const headers = await getHeaders(driver);
+      expect(headers.responseHeaders['content-security-policy']).toEqual(
+        "default-src 'self' * 'unsafe-inline'; img-src 'self' https: data:"
+      );
     });
   });
 
