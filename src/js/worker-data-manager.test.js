@@ -34,6 +34,7 @@ const EMPTY_PROFILE = {
   respHeaders: [],
   cookieHeaders: [],
   setCookieHeaders: [],
+  cspHeaders: [],
   urlReplacements: [],
   urlFilters: [],
   excludeUrlFilters: [],

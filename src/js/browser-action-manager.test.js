@@ -48,6 +48,7 @@ describe('browser-action-manager', () => {
         respHeaders: [],
         cookieHeaders: [],
         setCookieHeaders: [],
+        cspHeaders: [],
         urlReplacements: []
       }
     ];
