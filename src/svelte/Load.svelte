@@ -1,4 +1,5 @@
 <script>
+  import lodashIsArray from 'lodash/isArray.js';
   import { profile, storageWriter } from '@modheader/core';
   import { initProfileHooks } from '../js/profile-hook.js';
 
@@ -33,7 +34,7 @@
     const encodedProfile = params.get('profile');
     if (encodedProfile) {
       const importedProfile = JSON.parse(encodedProfile);
-      const importedProfiles = [importedProfile];
+      const importedProfiles = lodashIsArray(importedProfile) ? importedProfile : [importedProfile];
       profile.fixProfiles(importedProfiles);
       await storageWriter.setProfilesAndIndex(importedProfiles, importedProfiles.length - 1);
       loadedProfile = JSON.stringify(importedProfile, null, 2);
