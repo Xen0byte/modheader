@@ -11,7 +11,11 @@
     await storageWriter.setProfilesAndIndex([profile.createProfile()], 0);
     isDone = 'Done';
   }
-  run().catch((err) => (errorCaught = err));
+
+  run().catch((err) => {
+    errorCaught = err;
+    console.error(err);
+  });
 </script>
 
 <svelte:head>

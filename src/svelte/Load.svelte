@@ -42,7 +42,11 @@
     }
     isDone = true;
   }
-  run().catch((err) => (errorCaught = err));
+
+  run().catch((err) => {
+    errorCaught = err;
+    console.error(err);
+  });
 </script>
 
 <svelte:head>

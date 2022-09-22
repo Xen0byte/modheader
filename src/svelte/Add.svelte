@@ -15,21 +15,39 @@
   }
 
   async function run() {
-    let chromeLocal = await storage.getLocal(['profiles', 'selectedProfile']);
-    const params = new URL(document.location).searchParams;
-    addedHeaders = [];
-    for (const entry of params.entries()) {
-      addedHeaders.push({
-        name: entry[0],
-        value: entry[1],
-        enabled: true
-      });
+    let chromeLocal;
+    try {
+      chromeLocal = await storage.getLocal(['profiles', 'selectedProfile']);
+    } catch (err) {
+      console.log('Failed to load storage', err);
+      throw err;
+    }
+    try {
+      const params = new URL(document.location).searchParams;
+      addedHeaders = [];
+      for (const entry of params.entries()) {
+        addedHeaders.push({
+          name: entry[0],
+          value: entry[1],
+          enabled: true
+        });
+      }
+    } catch (err) {
+      console.log('Failed to parse URL params', err);
+      throw err;
     }
     if (addedHeaders.length > 0) {
-      const selectedProfile = chromeLocal.profiles[chromeLocal.selectedProfile];
-      selectedProfile.headers.push(...addedHeaders);
-      await storageWriter.setProfiles(chromeLocal.profiles);
-      headerInputs = [...addedHeaders];
+      try {
+        console.log('chromeLocal', chromeLocal);
+        const selectedProfile = chromeLocal.profiles[chromeLocal.selectedProfile];
+        console.log('selectedProfile', selectedProfile);
+        selectedProfile.headers.push(...addedHeaders);
+        await storageWriter.setProfiles(chromeLocal.profiles);
+        headerInputs = [...addedHeaders];
+      } catch (err) {
+        console.log('Failed to save to storage', err);
+        throw err;
+      }
     } else {
       headerInputs = [
         {
@@ -45,7 +63,11 @@
 
     isDone = true;
   }
-  run().catch((err) => (errorCaught = err));
+
+  run().catch((err) => {
+    errorCaught = err;
+    console.error(err);
+  });
 </script>
 
 <svelte:head>
