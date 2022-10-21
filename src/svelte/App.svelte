@@ -25,7 +25,7 @@
   const { selectedProfile } = profile;
   const { isPaused } = datasource;
 
-  export let isFullscreen;
+  export let isFullscreen = false;
 </script>
 
 {#await datasourceLoader.init() then initResult}
